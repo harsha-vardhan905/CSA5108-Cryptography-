@@ -1,0 +1,25 @@
+#include <stdio.h>
+#include <string.h>
+#include <openssl/des.h>
+
+int main() {
+    DES_cblock key = "12345678"; // 8-byte key (64 bits, only 56 bits used)
+    DES_key_schedule schedule;
+
+    DES_set_key((DES_cblock *)key, &schedule);
+
+    char input[] = "Hello123";    // must be 8 bytes
+    char output[9], decrypted[9];
+
+    DES_ecb_encrypt((DES_cblock *)input, (DES_cblock *)output, &schedule, DES_ENCRYPT);
+    DES_ecb_encrypt((DES_cblock *)output, (DES_cblock *)decrypted, &schedule, DES_DECRYPT);
+
+    output[8] = decrypted[8] = '\0';  // Null-terminate strings
+
+    printf("Plaintext:  %s\n", input);
+    printf("Encrypted:  ");
+    for (int i = 0; i < 8; i++) printf("%02X ", (unsigned char)output[i]);
+    printf("\nDecrypted:  %s\n", decrypted);
+
+    return 0;
+}
